@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+    <meta charset="UTF-8">
+    <title>Samir Hub V41 | Govt Services All-in-One</title>
+    <style>
+        :root { --p: #1a73e8; --gem: linear-gradient(135deg, #4285f4, #9b72cb); --d: #1e1f20; --bg: #f8f9fa; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR */
+        aside { width: 280px; background: var(--d); color: white; padding: 15px; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; border-right: 2px solid #333; }
+        .nav-btn { padding: 10px 12px; border-radius: 8px; cursor: pointer; color: #c4c7c5; border: none; background: none; width: 100%; text-align: left; margin-bottom: 3px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; }
+        .nav-btn:hover, .active { background: #3c4043; color: white; }
+        .gemini-tab { background: var(--gem) !important; color: white !important; font-weight: bold; margin: 10px 0; }
+        .sep { margin: 15px 0 8px 10px; font-size: 10px; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 3px; }
+
+        /* MAIN */
+        main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; align-items: center; }
+        #display-container { flex: 1; position: relative; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+        .active-view { display: block !important; }
+
+        /* AI CHAT */
+        #gemini-chat { position: absolute; inset: 0; background: white; display: none; flex-direction: column; padding: 20px; z-index: 10; }
+        .chat-box { flex: 1; overflow-y: auto; padding: 15px; border-radius: 15px; background: #f1f3f4; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; }
+        .user-msg { align-self: flex-end; background: var(--p); color: white; }
+        .ai-msg { align-self: flex-start; background: white; border: 1px solid #ddd; }
+        .input-group { display: flex; gap: 10px; background: #fff; padding: 8px; border: 2px solid #ddd; border-radius: 30px; }
+        #ai-in { flex: 1; border: none; outline: none; padding-left: 10px; }
+        
+        .del-btn { color: #ff5252; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div style="text-align:center; padding-bottom:15px;">
+            <b style="font-size:20px; color:white;">SAMIR <span style="color:#8ab4f8;">V41</span></b>
+        </div>
+
+        <button class="nav-btn active" onclick="showTab('home-view', this)">🏠 Dashboard Home</button>
+        <button class="nav-btn gemini-tab" onclick="showTab('gemini-chat', this)">✨ Ask Gemini AI</button>
+        
+        <div class="sep">Odisha Services</div>
+        <button class="nav-btn" onclick="loadSite('https://www.birthdeath.odisha.gov.in/', 'Birth & Death', this)">📑 Birth & Death</button>
+        <button class="nav-btn" onclick="loadSite('https://bhulekh.ori.nic.in/', 'Bhulekh (ROR)', this)">🗺️ Odisha Bhulekh</button>
+        <button class="nav-btn" onclick="loadSite('https://edistrict.odisha.gov.in/', 'e-District', this)">📄 Residence/Cast</button>
+        <button class="nav-btn" onclick="loadSite('https://food.odisha.gov.in/', 'Ration Card', this)">🌾 Ration Card</button>
+        <button class="nav-btn" onclick="loadSite('https://www.bijuhealthcard.odisha.gov.in/', 'BSKY Card', this)">🏥 BSKY Health</button>
+
+        <div class="sep">Central Services</div>
+        <button class="nav-btn" onclick="loadSite('https://myaadhaar.uidai.gov.in/', 'Aadhaar', this)">🆔 Aadhaar Card</button>
+        <button class="nav-btn" onclick="loadSite('https://voterportal.eci.gov.in/', 'Voter ID', this)">🗳️ Voter Portal</button>
+        <button class="nav-btn" onclick="loadSite('https://www.pan.utiitsl.com/PAN/', 'PAN Card', this)">💳 PAN Service</button>
+        <button class="nav-btn" onclick="loadSite('https://pmkisan.gov.in/', 'PM Kisan', this)">👨‍🌾 PM Kisan</button>
+        <button class="nav-btn" onclick="loadSite('https://www.epfindia.gov.in/', 'EPFO/PF', this)">💰 EPFO (PF)</button>
+
+        <div class="sep">AI Custom Links</div>
+        <div id="ai-links-area"></div>
+
+        <button class="nav-btn" onclick="location.reload()" style="margin-top:20px; color:#f28b82; border-top: 1px solid #444;">🔒 Logout</button>
+    </aside>
+
+    <main>
+        <header>
+            <b id="hdr-title" style="color:var(--p);">Sarkari Master Dashboard</b>
+            <b id="clock">00:00:00</b>
+        </header>
+
+        <div id="display-container">
+            <iframe id="main-frame"></iframe>
+
+            <div id="gemini-chat">
+                <div class="chat-box" id="chat-flow">
+                    <div class="msg ai-msg"><b>Gemini:</b> Namaste Samir Bhai! Saari Govt sites add ho gayi hain. Kuch naya add karna hai toh boliye!</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ai-in" placeholder="Ex: Add YouTube..." onkeypress="if(event.key==='Enter') askGemini()">
+                    <button onclick="askGemini()" style="background:var(--p); color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer;">Send</button>
+                </div>
+            </div>
+
+            <div id="home-view" class="active-view" style="padding:30px;">
+                <div style="background:white; padding:40px; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.05); text-align:center;">
+                    <h1 style="color:var(--p);">Welcome Samir Bhai!</h1>
+                    <p>Aapke liye Odisha aur Central ki saari important sites sidebar mein active hain.</p>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:20px;">
+                        <div style="background:#e8f0fe; padding:15px; border-radius:10px;"><b>Odisha Sites:</b> 5 Active</div>
+                        <div style="background:#e6f4ea; padding:15px; border-radius:10px;"><b>Central Sites:</b> 5 Active</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showTab(id, btn) {
+            document.querySelectorAll('iframe, #gemini-chat, #home-view').forEach(el => el.style.display = 'none');
+            if(id === 'gemini-chat') document.getElementById(id).style.display = 'flex';
+            else document.getElementById(id).style.display = 'block';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+        }
+
+        function loadSite(url, name, btn) {
+            showTab('main-frame', btn);
+            document.getElementById('main-frame').src = url;
+            document.getElementById('hdr-title').innerText = name;
+        }
+
+        function askGemini() {
+            const inputField = document.getElementById('ai-in');
+            const input = inputField.value.trim();
+            if(!input) return;
+
+            const chatFlow = document.getElementById('chat-flow');
+            chatFlow.innerHTML += `<div class="msg user-msg">${input}</div>`;
+            inputField.value = '';
+
+            setTimeout(() => {
+                let response = "Bhai, main samajh gaya! Aapka portal ab poori tarah Govt Ready hai.";
+                if(input.toLowerCase().startsWith('add ')) {
+                    const parts = input.split(' ');
+                    const name = parts[1].toUpperCase();
+                    let url = parts[2] || name.toLowerCase() + ".com";
+                    if(!url.startsWith('http')) url = 'https://' + url;
+                    addCustomLink(name, url);
+                    response = `Done! Maine <b>${name}</b> ko custom links mein jodd diya hai.`;
+                }
+                chatFlow.innerHTML += `<div class="msg ai-msg"><b>Gemini:</b> ${response}</div>`;
+                chatFlow.scrollTop = chatFlow.scrollHeight;
+            }, 500);
+        }
+
+        function addCustomLink(name, url) {
+            let links = JSON.parse(localStorage.getItem('v41_links')) || [];
+            links.push({name, url});
+            localStorage.setItem('v41_links', JSON.stringify(links));
+            renderAI();
+        }
+
+        function deleteLink(index) {
+            let links = JSON.parse(localStorage.getItem('v41_links'));
+            links.splice(index, 1);
+            localStorage.setItem('v41_links', JSON.stringify(links));
+            renderAI();
+        }
+
+        function renderAI() {
+            const area = document.getElementById('ai-links-area');
+            let links = JSON.parse(localStorage.getItem('v41_links')) || [];
+            area.innerHTML = '';
+            links.forEach((l, index) => {
+                area.innerHTML += `
+                    <div class="nav-btn" style="border-left:3px solid #34a853; margin-left:10px;">
+                        <span onclick="loadSite('${l.url}', '${l.name}', this.parentElement)" style="flex:1; cursor:pointer;">🔗 ${l.name}</span>
+                        <span class="del-btn" onclick="deleteLink(${index})">×</span>
+                    </div>`;
+            });
+        }
+
+        renderAI();
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    </script>
+</body>
+</html>
