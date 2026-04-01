@@ -2,6 +2,110 @@
 <html lang="or">
 <head>
     <meta charset="UTF-8">
+    <title>Samir Portal | Secure Access</title>
+    <style>
+        :root { --p: #1a73e8; --gem: linear-gradient(135deg, #4285f4, #9b72cb); --d: #1e1f20; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100vh; background: #f0f2f5; overflow: hidden; }
+
+        /* LOGIN BOX STYLE */
+        #login-screen {
+            position: fixed; inset: 0; background: #121212;
+            display: flex; align-items: center; justify-content: center; z-index: 10000;
+        }
+        .login-card {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); text-align: center; width: 380px;
+        }
+        .login-card h2 { color: var(--d); margin-bottom: 25px; letter-spacing: 1px; }
+        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; }
+        .input-box:focus { border-color: #4285f4; }
+        
+        .login-btn {
+            width: 100%; padding: 12px; background: var(--gem);
+            color: white; border: none; border-radius: 10px;
+            font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px;
+        }
+        .error-msg { color: #d93025; font-size: 13px; margin-bottom: 15px; display: none; font-weight: bold; }
+
+        /* MAIN DASHBOARD (HIDDEN) */
+        #main-portal { display: none; height: 100vh; width: 100%; }
+        aside { width: 270px; background: var(--d); color: white; padding: 15px; display: flex; flex-direction: column; }
+        .nav-btn { padding: 12px; border-radius: 8px; color: #c4c7c5; border: none; background: none; width: 100%; text-align: left; cursor: pointer; margin-bottom: 5px; font-size: 14px; }
+        .nav-btn:hover, .active { background: #3c4043; color: white; }
+        main { flex: 1; display: flex; flex-direction: column; background: #fff; }
+        header { padding: 12px 20px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; background: white; }
+        #display-frame { flex: 1; border: none; width: 100%; background: white; }
+        .home-msg { padding: 50px; text-align: center; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+            <h2>SAMIR MASTER LOGIN</h2>
+            <div id="err" class="error-msg">❌ ID ya Password galat hai!</div>
+            
+            <input type="text" id="user-id" class="input-box" placeholder="User ID Daalein">
+            <input type="password" id="user-pass" class="input-box" placeholder="Password Daalein">
+            
+            <button class="login-btn" onclick="validateLogin()">SECURE LOGIN</button>
+            <p style="font-size: 11px; color: #888; margin-top: 20px;">Access Restricted to Samir Nayak Only</p>
+        </div>
+    </div>
+
+    <div id="main-portal">
+        <aside>
+            <h3 style="text-align:center; color:#8ab4f8; border-bottom: 1px solid #444; padding-bottom: 15px;">SAMIR DASHBOARD</h3>
+            <button class="nav-btn active" onclick="changeView('home', this)">🏠 Main Home</button>
+            <div style="margin:20px 0 5px 10px; font-size:11px; color:#888; font-weight:bold;">GOVT TOOLS</div>
+            <button class="nav-btn" onclick="changeView('https://www.birthdeath.odisha.gov.in/', this)">📑 Birth & Death</button>
+            <button class="nav-btn" onclick="changeView('https://bhulekh.ori.nic.in/', this)">🗺️ Odisha Bhulekh</button>
+            <button class="nav-btn" onclick="changeView('https://myaadhaar.uidai.gov.in/', this)">🆔 Aadhaar Card</button>
+            
+            <button class="nav-btn" onclick="location.reload()" style="margin-top:auto; color:#f28b82; border-top: 1px solid #444; padding-top: 15px;">🔒 Logout System</button>
+        </aside>
+
+        <main>
+            <header>
+                <b id="hdr-title" style="color:var(--p);">Welcome, Samir Nayak</b>
+                <b id="clock">00:00:00</b>
+            </header>
+            
+            <div id="home-view" class="home-msg">
+                <div style="background:white; padding:40px; border-radius:20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <h1 style="color:var(--p);">Login Safal Raha!</h1>
+                    <p>Aapka secure dashboard ab upyog ke liye taiyar hai.</p>
+                </div>
+            </div>
+            
+            <iframe id="display-frame" style="display:none;"></iframe>
+        </main>
+    </div>
+
+    <script>
+        // --- LOGIN LOGIC ---
+        function validateLogin() {
+            const uID = document.getElementById('user-id').value;
+            const uPass = document.getElementById('user-pass').value;
+            const err = document.getElementById('err');
+
+            // JO AAPNE BOLI THI WAHI DETAILS
+            if(uID === "SAMIR_NAYAK" && uPass === "Samir@1997") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-portal').style.display = 'flex';
+            } else {
+                err.style.display = 'block';
+                // Input clear kar dena taaki dobara likh sakein
+                document.getElementById('user-pass').value = '';
+            }
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function changeView(url, btn) {
+            const frame = document.getElementById('display-
+    <meta charset="UTF-8">
     <title>Samir Hub V41 | Govt Services All-in-One</title>
     <style>
         :root { --p: #1a73e8; --gem: linear-gradient(135deg, #4285f4, #9b72cb); --d: #1e1f20; --bg: #f8f9fa; }
